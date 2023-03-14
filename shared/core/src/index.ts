@@ -10,7 +10,7 @@ export const patterns = {
 
 const getRouteId = (path: string) => path.replace(...patterns.route).replace(/\W/g, '')
 
-const getRouteExports = (content: string) => ({
+export const getRouteExports = (content: string) => ({
   default: /^export\s+default\s/gm.test(content),
   loader: /^export\s+(const|function|async function|let)\s+Loader\W/gm.test(content),
   action: /^export\s+(const|function|async function|let)\s+Action\W/gm.test(content),
