@@ -1,6 +1,18 @@
-import { generatePath, NavigateOptions, useLocation, useNavigate, useParams } from 'react-router-dom'
+import {
+  generatePath,
+  NavigateOptions,
+  useLocation,
+  useNavigate,
+  useParams,
+  useRouteLoaderData,
+} from 'react-router-dom'
 
-export const hooks = <Path extends string, Params extends Record<string, any>, ModalPath extends string>() => {
+export const hooks = <
+  Path extends string,
+  Params extends Record<string, any>,
+  ModalPath extends string,
+  RouteLoaderDataPath extends string
+>() => {
   type ParamPath = keyof Params
   type To = Path | Partial<{ pathname: Path | string; search: string; hash: string }>
 
@@ -39,5 +51,6 @@ export const hooks = <Path extends string, Params extends Record<string, any>, M
         },
       }
     },
+    useRouteLoaderData: (path: RouteLoaderDataPath) => useRouteLoaderData(path),
   }
 }

@@ -1,7 +1,7 @@
-import { writeFileSync } from 'fs'
+import { readFileSync, writeFileSync } from 'fs'
 import fg from 'fast-glob'
 
-import { patterns } from '@generouted/core'
+import { getRouteExports, patterns } from '@generouted/core'
 
 import { Options } from './options'
 import { template } from './template'
@@ -37,6 +37,21 @@ const generateRouteTypes = async (options: Options) => {
     }
   })
 
+  const routeLoaderDataPaths = files
+    .map((path) => {
+      if (!path) return false
+      const paths = path.split('/')
+      const last = paths.at(-1)
+      const routePath = paths.at(-2)
+      if (last !== '_layout.tsx') return false
+      const content = readFileSync(path, { encoding: 'utf-8' })
+      const loaders = getRouteExports(content)
+
+      if (loaders.loader) return routePath
+      return false
+    })
+    .filter(Boolean)
+
   const modals = modal.map(
     (path) =>
       `/${path
@@ -51,7 +66,12 @@ const generateRouteTypes = async (options: Options) => {
     '\n\n' +
     `export type Params = {\n  ${params.sort().join('\n  ')}\n}` +
     '\n\n' +
-    `export type ModalPath = "${modals.sort().join('" | "') || 'never'}"`.replace(/"/g, modals.length ? '`' : '')
+    `export type ModalPath = "${modals.sort().join('" | "') || 'never'}"`.replace(/"/g, modals.length ? '`' : '') +
+    '\n\n' +
+    `export type RouteLoaderDataPath = "${routeLoaderDataPaths.sort().join('" | "') || 'never'}"`.replace(
+      /"/g,
+      routeLoaderDataPaths.length ? '`' : ''
+    )
 
   const content = template.replace('// types', types)
   const count = paths.length + modals.length
