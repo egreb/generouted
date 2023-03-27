@@ -42,12 +42,30 @@ const generateRouteTypes = async (options: Options) => {
       if (!path) return false
       const paths = path.split('/')
       const last = paths.at(-1)
-      const routePath = paths.at(-2)
-      if (last !== '_layout.tsx') return false
+
       const content = readFileSync(path, { encoding: 'utf-8' })
       const loaders = getRouteExports(content)
 
-      if (loaders.loader) return routePath
+      if (loaders.loader) {
+        // if exporting loader from a _layout, return parent path
+        const lastDirectory = paths.at(-2)
+        if (last === '_layout.tsx') return lastDirectory
+        // if filename is the same as parent directory it means it's a layout file
+        if (last?.replace('.tsx', '') === lastDirectory || last?.replace('.jsx', '') === lastDirectory) {
+          return lastDirectory
+        }
+
+        return paths
+          .filter(
+            (path) =>
+              // ignored paths
+              !['.', '..', 'src', 'index.tsx', 'index.jsx'].includes(path) &&
+              // ignore pathless paths
+              !(path.startsWith('(') && path.endsWith(')'))
+          )
+          .join('/')
+      }
+
       return false
     })
     .filter(Boolean)
