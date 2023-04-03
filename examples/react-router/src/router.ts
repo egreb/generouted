@@ -22,8 +22,8 @@ export type Params = {
 
 export type ModalPath = `/modal`
 
-export type RouteLoaderDataPath = ``
+export type RouteLoaderDataPath = `pages`
 
 export const { Link, Navigate } = components<Path, Params>()
-export const { useModals, useNavigate, useParams } = hooks<Path, Params, ModalPath, RouteLoaderDataPath>()
+export const { useModals, useNavigate, useParams, useRouteLoaderData } = hooks<Path, Params, ModalPath, RouteLoaderDataPath>()
 export const { redirect } = utils<Path, Params>()
