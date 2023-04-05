@@ -38,15 +38,14 @@ const generateRouteTypes = async (options: Options) => {
   })
 
   const loaderDataPaths = files
+    .filter((path) => !path.includes('_app') && !path.includes('/404'))
     .map((path) => {
       if (!path) return false
       const paths = path.split('/')
       const last = paths.at(-1)
 
-      const content = readFileSync(path, { encoding: 'utf-8' })
-      const loaders = getRouteExports(content)
-
-      if (loaders.loader) {
+      const exports = getRouteExports(readFileSync(path, { encoding: 'utf-8' }))
+      if (exports.loader) {
         // if exporting loader from a _layout, return parent path
         const lastDirectory = paths.at(-2)
         if (last === '_layout.tsx') return lastDirectory
