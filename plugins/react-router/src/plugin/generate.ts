@@ -37,7 +37,7 @@ const generateRouteTypes = async (options: Options) => {
     }
   })
 
-  const routeLoaderDataPaths = files
+  const loaderDataPaths = files
     .map((path) => {
       if (!path) return false
       const paths = path.split('/')
@@ -86,9 +86,9 @@ const generateRouteTypes = async (options: Options) => {
     '\n\n' +
     `export type ModalPath = "${modals.sort().join('" | "') || 'never'}"`.replace(/"/g, modals.length ? '`' : '') +
     '\n\n' +
-    `export type RouteLoaderDataPath = "${routeLoaderDataPaths.sort().join('" | "') || 'never'}"`.replace(
+    `export type LoaderPath = "${loaderDataPaths.sort().join('" | "') || 'never'}"`.replace(
       /"/g,
-      routeLoaderDataPaths.length ? '`' : ''
+      loaderDataPaths.length ? '`' : ''
     )
 
   const content = template.replace('// types', types)
